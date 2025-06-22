@@ -1,6 +1,6 @@
 # Bilibili字幕获取服务
 
-用于获取Bilibili视频的字幕内容，本地保存，并支持 web 展示
+用于获取Bilibili视频的字幕内容，本地保存，并支持 web 展示，当然了，全程 vibe coding
 
 ![Web界面截图](images/Snipaste_2025-06-22_12-15-25.jpg)
 ## 功能特性
