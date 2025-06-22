@@ -175,16 +175,16 @@ python start_web.py
 
 ```bash
 # 基本用法 - 自动保存到docs目录
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8"
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1"
 
 # 在文章中包含时间戳
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8" --with-timestamp
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1" --with-timestamp
 
 # 指定字幕语言
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8" --language zh-CN
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1" --language zh-CN
 
 # 列出可用的字幕语言
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8" --list-languages
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1" --list-languages
 ```
 
 #### 命令行参数
@@ -196,9 +196,9 @@ uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8" --list-langu
 
 #### 支持的URL格式
 
-- `https://www.bilibili.com/video/BV1bK411W7t8`
+- `https://www.bilibili.com/video/BV1wb421J7W1`
 - `https://www.bilibili.com/video/av12345`
-- `https://www.bilibili.com/list/watchlater?bvid=BV1bK411W7t8&oid=123`
+- `https://www.bilibili.com/list/watchlater?bvid=BV1wb421J7W1&oid=123`
 
 ### 输出文件
 
@@ -216,13 +216,13 @@ docs/
 ### 运行项目
 ```bash
 # 使用 uv run（推荐，无需激活虚拟环境）
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8"
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1"
 
 # 激活虚拟环境后运行
 source .venv/bin/activate  # Linux/macOS
 # 或
 .venv\Scripts\activate     # Windows
-python main.py "https://www.bilibili.com/video/BV1bK411W7t8"
+python main.py "https://www.bilibili.com/video/BV1wb421J7W1"
 ```
 
 ### 依赖管理
@@ -299,16 +299,16 @@ uv run flake8 .
 
 ```bash
 # 测试基本功能（需要提供视频链接）
-uv run python example.py "https://www.bilibili.com/video/BV1bK411W7t8"
+uv run python example.py "https://www.bilibili.com/video/BV1wb421J7W1"
 
 # 或使用主程序测试
-uv run python main.py "https://www.bilibili.com/video/BV1bK411W7t8"
+uv run python main.py "https://www.bilibili.com/video/BV1wb421J7W1"
 
 # 查看可用的字幕语言
-uv run python example.py "https://www.bilibili.com/video/BV1bK411W7t8" --list-languages
+uv run python example.py "https://www.bilibili.com/video/BV1wb421J7W1" --list-languages
 
 # 包含时间戳的文章格式
-uv run python example.py "https://www.bilibili.com/video/BV1bK411W7t8" --with-timestamp
+uv run python example.py "https://www.bilibili.com/video/BV1wb421J7W1" --with-timestamp
 ```
 
 ## 技术细节
