@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilibili 字幕获取工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #86868b;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .column {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            min-height: 600px;
+        }
+
+        .column-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1d1d1f;
+        }
+
+        /* 第一列样式 */
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #d2d2d7;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .url-input:focus {
+            border-color: #007aff;
+        }
+
+        .url-input::placeholder {
+            color: #86868b;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: #007aff;
+        }
+
+        .checkbox-label {
+            font-size: 16px;
+            color: #1d1d1f;
+            cursor: pointer;
+        }
+
+        .process-btn {
+            width: 100%;
+            padding: 16px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .process-btn:hover {
+            background: #0056cc;
+        }
+
+        .process-btn:disabled {
+            background: #d2d2d7;
+            cursor: not-allowed;
+        }
+
+        .video-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .video-item:hover {
+            background: #f8f9fa;
+            border-color: #007aff;
+        }
+
+        .video-item.selected {
+            background: #e3f2fd;
+            border-color: #007aff;
+        }
+
+        .video-title {
+            flex: 1;
+            font-size: 14px;
+            color: #1d1d1f;
+            margin-right: 10px;
+            word-break: break-all;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .video-link {
+            background: #007aff;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            white-space: nowrap;
+            transition: background-color 0.3s ease;
+        }
+
+        .video-link:hover {
+            background: #0056cc;
+        }
+
+        .video-link:disabled {
+            background: #d2d2d7;
+            cursor: not-allowed;
+        }
+
+        .delete-btn {
+            background: #ff3b30;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .delete-btn:hover {
+            background: #d70015;
+        }
+
+        .delete-btn:disabled {
+            background: #d2d2d7;
+            cursor: not-allowed;
+        }
+
+        /* 第二列样式 */
+        .format-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .format-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #d2d2d7;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .format-btn:hover {
+            border-color: #007aff;
+            background: #f0f8ff;
+        }
+
+        .format-btn.active {
+            border-color: #007aff;
+            background: #007aff;
+            color: white;
+        }
+
+        .format-btn h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .format-btn p {
+            font-size: 0.8rem;
+            color: #86868b;
+        }
+
+        .format-btn.active p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .content-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .content-display.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-style: italic;
+        }
+
+        /* 第三列样式 */
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #86868b;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* 加载和消息样式 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007aff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message, .success-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .column:last-child {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .format-buttons {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bilibili 字幕获取工具</h1>
+            <p>从 Bilibili 视频中提取字幕，支持多种格式输出</p>
+        </div>
+
+        <div class="main-content">
+            <!-- 第一列：输入和视频列表 -->
+            <div class="column">
+                <h2 class="column-title">请粘贴 bilibili 链接</h2>
+                
+                <div class="input-section">
+                    <input 
+                        type="text" 
+                        class="url-input" 
+                        id="videoUrl" 
+                        placeholder="https://www.bilibili.com/video/BV..."
+                    >
+                    
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="withTimestamp" class="checkbox">
+                        <label for="withTimestamp" class="checkbox-label">在文章中包含时间戳</label>
+                    </div>
+
+                    <button class="process-btn" id="processBtn">
+                        获取字幕
+                    </button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在处理视频，请稍候...</p>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <h3 class="column-title">这里是从 docs 文件夹读取到的列表</h3>
+                <div class="video-list" id="videoList">
+                    <!-- 视频列表将在这里动态加载 -->
+                </div>
+            </div>
+
+            <!-- 第二列：模式切换和内容展示 -->
+            <div class="column">
+                <div class="format-buttons">
+                    <div class="format-btn active" data-format="article">
+                        <h3>文章模式</h3>
+                        <p>显示文章格式内容</p>
+                    </div>
+                    <div class="format-btn" data-format="subtitle">
+                        <h3>字幕模式</h3>
+                        <p>显示 SRT 字幕格式</p>
+                    </div>
+                </div>
+
+                <div class="content-display empty" id="contentDisplay">
+                    文章或者字幕，要看用户选择哪种模式
+                </div>
+            </div>
+
+            <!-- 第三列：预留空间 -->
+            <div class="column">
+                <div class="placeholder">
+                    暂时留空
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSelectedVideo = null;
+        let currentMode = 'article';
+
+        // 页面加载时获取视频列表
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVideoList();
+        });
+
+        // 加载视频列表
+        async function loadVideoList() {
+            try {
+                const response = await fetch('/api/videos');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayVideoList(result.videos);
+                } else {
+                    console.error('加载视频列表失败:', result.error);
+                }
+            } catch (error) {
+                console.error('加载视频列表出错:', error);
+            }
+        }
+
+        // 显示视频列表
+        function displayVideoList(videos) {
+            const videoList = document.getElementById('videoList');
+            
+            if (videos.length === 0) {
+                videoList.innerHTML = '<div style="text-align: center; color: #86868b; padding: 20px;">暂无视频</div>';
+                return;
+            }
+
+            videoList.innerHTML = videos.map(video => `
+                <div class="video-item" data-title="${video.title}" data-url="${video.video_url || ''}">
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-actions">
+                        <a href="${video.video_url || '#'}" 
+                           class="video-link ${!video.video_url ? 'disabled' : ''}" 
+                           target="_blank"
+                           ${!video.video_url ? 'style="pointer-events: none;"' : ''}>
+                            跳转到原视频
+                        </a>
+                        <button class="delete-btn" data-title="${video.title}">删除</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // 为视频项添加点击事件
+            document.querySelectorAll('.video-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // 如果点击的是链接或删除按钮，不执行选择逻辑
+                    if (e.target.classList.contains('video-link') || 
+                        e.target.classList.contains('delete-btn')) {
+                        return;
+                    }
+                    
+                    selectVideo(this);
+                });
+            });
+
+            // 为删除按钮添加点击事件
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 阻止事件冒泡
+                    const videoTitle = this.dataset.title;
+                    deleteVideo(videoTitle);
+                });
+            });
+        }
+
+        // 选择视频
+        function selectVideo(videoElement) {
+            // 移除之前的选中状态
+            document.querySelectorAll('.video-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 设置当前选中状态
+            videoElement.classList.add('selected');
+            currentSelectedVideo = videoElement.dataset.title;
+            
+            // 加载内容
+            loadVideoContent(currentSelectedVideo, currentMode);
+        }
+
+        // 加载视频内容
+        async function loadVideoContent(videoTitle, contentType) {
+            try {
+                const response = await fetch(`/api/video_content/${encodeURIComponent(videoTitle)}/${contentType}`);
+                const result = await response.json();
+                
+                const contentDisplay = document.getElementById('contentDisplay');
+                
+                if (result.success) {
+                    contentDisplay.innerHTML = result.content;
+                    contentDisplay.classList.remove('empty');
+                } else {
+                    contentDisplay.innerHTML = `无法加载${contentType === 'article' ? '文章' : '字幕'}内容: ${result.error}`;
+                    contentDisplay.classList.add('empty');
+                }
+            } catch (error) {
+                const contentDisplay = document.getElementById('contentDisplay');
+                contentDisplay.innerHTML = `加载内容时出错: ${error.message}`;
+                contentDisplay.classList.add('empty');
+            }
+        }
+
+        // 格式按钮切换
+        document.querySelectorAll('.format-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentMode = this.dataset.format;
+                
+                // 如果有选中的视频，重新加载内容
+                if (currentSelectedVideo) {
+                    loadVideoContent(currentSelectedVideo, currentMode);
+                }
+            });
+        });
+
+        // 处理按钮点击事件
+        document.getElementById('processBtn').addEventListener('click', async function() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const withTimestamp = document.getElementById('withTimestamp').checked;
+            
+            if (!url) {
+                showError('请输入有效的视频链接');
+                return;
+            }
+
+            // 显示加载状态
+            showLoading();
+            this.disabled = true;
+            this.textContent = '处理中...';
+
+            try {
+                const response = await fetch('/api/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        with_timestamp: withTimestamp
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('处理完成！文件已保存到本地。');
+                    // 重新加载视频列表
+                    loadVideoList();
+                    // 清空输入框
+                    document.getElementById('videoUrl').value = '';
+                } else {
+                    showError(result.error);
+                }
+            } catch (error) {
+                showError('网络错误：' + error.message);
+            } finally {
+                hideLoading();
+                this.disabled = false;
+                this.textContent = '获取字幕';
+            }
+        });
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            hideMessages();
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // 输入框回车事件
+        document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('processBtn').click();
+            }
+        });
+
+        // 删除视频
+        async function deleteVideo(videoTitle) {
+            if (!confirm(`确定要删除视频"${videoTitle}"的所有文件吗？此操作不可恢复。`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/delete/${encodeURIComponent(videoTitle)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(result.message);
+                    // 如果删除的是当前选中的视频，清空内容显示
+                    if (currentSelectedVideo === videoTitle) {
+                        currentSelectedVideo = null;
+                        const contentDisplay = document.getElementById('contentDisplay');
+                        contentDisplay.innerHTML = '文章或者字幕，要看用户选择哪种模式';
+                        contentDisplay.classList.add('empty');
+                    }
+                    // 重新加载视频列表
+                    loadVideoList();
+                } else {
+                    showError('删除失败: ' + result.error);
+                }
+            } catch (error) {
+                showError('删除时出错: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 
